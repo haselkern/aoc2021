@@ -1,14 +1,9 @@
-const INPUT: &str = include_str!("../../input/01a.txt");
-
 fn main() {
-    let nums = input();
-    let count = count_increases(nums);
-    println!("First solution: {}", count);
+    println!("First solution: {}", count_increases(input()));
 
     let input: Vec<i32> = input().collect();
     let nums = input.windows(3).map(|w| w.iter().sum());
-    let count = count_increases(nums);
-    println!("Second solution: {}", count);
+    println!("Second solution: {}", count_increases(nums));
 }
 
 fn count_increases(it: impl Iterator<Item = i32>) -> usize {
@@ -21,7 +16,6 @@ fn count_increases(it: impl Iterator<Item = i32>) -> usize {
                 count += 1;
             }
         }
-
         prev = Some(n);
     }
 
@@ -29,5 +23,7 @@ fn count_increases(it: impl Iterator<Item = i32>) -> usize {
 }
 
 fn input() -> impl Iterator<Item = i32> {
-    INPUT.lines().map(|l| l.parse::<i32>().unwrap())
+    include_str!("../../input/01a.txt")
+        .lines()
+        .map(|l| l.parse().unwrap())
 }
