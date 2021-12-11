@@ -13,20 +13,18 @@ fn solve() -> (usize, usize) {
         i += 1;
 
         // Add one to each octopus
-        for row in 0..field.len() {
-            for col in 0..field[0].len() {
-                field[row][col].energy += 1;
-            }
-        }
+        field.apply(|o| {
+            o.energy += 1;
+        });
 
         // Do the flashing
         let mut changed = true;
         while changed {
             changed = false;
 
-            for row in 0..field.len() {
-                for col in 0..field[0].len() {
-                    let current = &mut field[row][col];
+            for row in 0..10 {
+                for col in 0..10 {
+                    let current = &mut field.0[row][col];
                     if current.energy > 9 && !current.did_flash {
                         current.did_flash = true;
                         changed = true;
@@ -34,7 +32,7 @@ fn solve() -> (usize, usize) {
                             flashes += 1;
                         }
                         for (r, c) in neighbors(row, col) {
-                            field[r][c].energy += 1;
+                            field.0[r][c].energy += 1;
                         }
                     }
                 }
@@ -42,20 +40,17 @@ fn solve() -> (usize, usize) {
         }
 
         // Have all octopi flashed?
-        if field.iter().flat_map(|r| r.iter()).all(|o| o.did_flash) {
+        if field.0.iter().flat_map(|r| r.iter()).all(|o| o.did_flash) {
             return (flashes, i);
         }
 
         // Reset octopi > 9
-        for row in 0..field.len() {
-            for col in 0..field[0].len() {
-                let current = &mut field[row][col];
-                if current.energy > 9 {
-                    current.energy = 0;
-                    current.did_flash = false;
-                }
+        field.apply(|o| {
+            if o.energy > 9 {
+                o.energy = 0;
+                o.did_flash = false;
             }
-        }
+        });
     }
 }
 
@@ -90,7 +85,21 @@ fn neighbors(row: usize, col: usize) -> Vec<(usize, usize)> {
     neighbors
 }
 
-type Field = Vec<Vec<Octopus>>;
+struct Field(Vec<Vec<Octopus>>);
+
+impl Field {
+    /// Do something with every octopus
+    fn apply<F>(&mut self, mut op: F)
+    where
+        F: FnMut(&mut Octopus),
+    {
+        for row in 0..10 {
+            for col in 0..10 {
+                op(&mut self.0[row][col])
+            }
+        }
+    }
+}
 
 struct Octopus {
     energy: u32,
@@ -98,16 +107,18 @@ struct Octopus {
 }
 
 fn input() -> Field {
-    include_str!("../../input/11.txt")
-        .lines()
-        .map(|l| {
-            l.chars()
-                .map(|c| c.to_digit(10).unwrap())
-                .map(|n| Octopus {
-                    energy: n,
-                    did_flash: false,
-                })
-                .collect()
-        })
-        .collect()
+    Field(
+        include_str!("../../input/11.txt")
+            .lines()
+            .map(|l| {
+                l.chars()
+                    .map(|c| c.to_digit(10).unwrap())
+                    .map(|n| Octopus {
+                        energy: n,
+                        did_flash: false,
+                    })
+                    .collect()
+            })
+            .collect(),
+    )
 }
