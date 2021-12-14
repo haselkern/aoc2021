@@ -2,8 +2,8 @@ use std::collections::HashMap;
 
 fn main() {
     let puzzle = Network::from_str(include_str!("../../input/12.txt"));
-    println!("First solution: {}", puzzle.solve(Path::new(), false));
-    println!("Second solution: {}", puzzle.solve(Path::new(), true));
+    println!("First solution: {}", puzzle.solve(Path::default(), false));
+    println!("Second solution: {}", puzzle.solve(Path::default(), true));
 }
 
 type Cave = &'static str;
@@ -12,7 +12,7 @@ struct Network {
     connections: HashMap<Cave, Vec<Cave>>,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default)]
 struct Path {
     caves: Vec<Cave>,
 }
@@ -54,11 +54,6 @@ impl Network {
 }
 
 impl Path {
-    fn new() -> Self {
-        Self {
-            caves: vec!["start"],
-        }
-    }
     fn can_visit(&self, c: Cave) -> bool {
         if c.to_lowercase() == c {
             // Small caves may be visitied at most once
@@ -85,19 +80,16 @@ impl Path {
                 let a = only_small_caves.len();
                 only_small_caves.dedup();
                 let b = only_small_caves.len();
-                a == b
-            } else {
-                true
+                return a == b;
             }
-        } else {
-            true
         }
+        true
     }
     fn visit(&mut self, c: Cave) {
         self.caves.push(c);
     }
     fn end(&self) -> Cave {
-        self.caves.last().unwrap()
+        self.caves.last().unwrap_or(&"start")
     }
 }
 
@@ -118,7 +110,7 @@ mod test {
         b-end
         "
             )
-            .solve(Path::new(), false),
+            .solve(Path::default(), false),
             10
         );
     }
@@ -136,7 +128,7 @@ mod test {
         b-end
         "
             )
-            .solve(Path::new(), true),
+            .solve(Path::default(), true),
             36
         );
     }
@@ -157,7 +149,7 @@ mod test {
         kj-dc
         "
             )
-            .solve(Path::new(), false),
+            .solve(Path::default(), false),
             19
         );
     }
@@ -186,7 +178,7 @@ mod test {
         start-RW
         "
             )
-            .solve(Path::new(), false),
+            .solve(Path::default(), false),
             226
         );
     }
