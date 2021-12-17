@@ -289,30 +289,30 @@ mod test {
     fn example_evaluations() {
         let mut bits = Bits::from("C200B40A82");
         let (packet, _) = Packet::parse(&mut bits);
-        assert_eq!(packet.version_sum(), 3);
+        assert_eq!(packet.evaluate(), 3);
 
         let mut bits = Bits::from("04005AC33890");
         let (packet, _) = Packet::parse(&mut bits);
-        assert_eq!(packet.version_sum(), 54);
+        assert_eq!(packet.evaluate(), 54);
 
         let mut bits = Bits::from("880086C3E88112");
         let (packet, _) = Packet::parse(&mut bits);
-        assert_eq!(packet.version_sum(), 7);
+        assert_eq!(packet.evaluate(), 7);
 
         let mut bits = Bits::from("D8005AC2A8F0");
         let (packet, _) = Packet::parse(&mut bits);
-        assert_eq!(packet.version_sum(), 1);
+        assert_eq!(packet.evaluate(), 1);
 
         let mut bits = Bits::from("F600BC2D8F");
         let (packet, _) = Packet::parse(&mut bits);
-        assert_eq!(packet.version_sum(), 0);
+        assert_eq!(packet.evaluate(), 0);
 
         let mut bits = Bits::from("9C005AC2F8F0");
         let (packet, _) = Packet::parse(&mut bits);
-        assert_eq!(packet.version_sum(), 0);
+        assert_eq!(packet.evaluate(), 0);
 
         let mut bits = Bits::from("9C0141080250320F1802104A08");
         let (packet, _) = Packet::parse(&mut bits);
-        assert_eq!(packet.version_sum(), 1);
+        assert_eq!(packet.evaluate(), 1);
     }
 }
